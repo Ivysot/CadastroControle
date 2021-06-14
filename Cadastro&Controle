@@ -1,0 +1,61 @@
+function _hyperlink(MySheet) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet();
+  var planilha = sheet.getSheetByName(MySheet);
+  SpreadsheetApp.setActiveSheet(planilha);
+}
+
+function btnInscritos(){
+  _hyperlink('Inscritos');
+}
+
+function btnSim(){
+  var spreadsheet = SpreadsheetApp.getActive();
+  var nome = spreadsheet.getRange("B2").getValue().toString().toLowerCase();
+  var lastdata = spreadsheet.getSheets()[3].getLastRow();
+  var lista = spreadsheet.getSheets()[3].getRange(2,4,lastdata,1).getValues();
+  var last = lista.length;
+  var filtro = [];
+  for (i = 0; i <= last; i++ ) {
+    if (lista[i] != nome){
+      filtro.push(lista[i]);
+    }
+  }
+  var criteria = SpreadsheetApp.newFilterCriteria()
+  .setHiddenValues(filtro)
+  .build();
+  spreadsheet.getSheets()[3].getFilter().setColumnFilterCriteria(1, criteria);
+  var s = spreadsheet.getSheets()[3];
+  var lastRow = 0;
+  for (var i = s.getLastRow(); i > 0; i--) {
+    if (!s.isRowHiddenByFilter(i)) {
+      lastRow = i;
+      break;
+    }
+  }
+  var cell = spreadsheet.getSheets()[3].getRange(lastRow, 5);
+  cell.setValue('presente');
+  spreadsheet.getSheets()[3].getFilter().removeColumnFilterCriteria(1);
+  spreadsheet.setActiveSheet(spreadsheet.getSheetByName('Home'), true);
+  spreadsheet.getSheets()[1].getRange("B2").clearContent();
+  spreadsheet.getSheets()[1].hideSheet();
+};
+
+function btnNInscritos(){
+  _hyperlink('Inscrever');
+}
+
+function btnInscrever(){
+  var spreadsheet = SpreadsheetApp.getActive();
+  var nome = spreadsheet.getRange("B1").getValue();
+  var ra = spreadsheet.getRange("B2").getValue();
+  var email = spreadsheet.getRange("B3").getValue();
+  var lastRow = spreadsheet.getSheets()[3].getLastRow();
+  spreadsheet.getSheets()[3].getRange(lastRow+1, 1).setValue(nome);
+  spreadsheet.getSheets()[3].getRange(lastRow+1, 2).setValue(ra);
+  spreadsheet.getSheets()[3].getRange(lastRow+1, 3).setValue(email);
+  spreadsheet.getSheets()[3].getRange(lastRow+1, 5).setValue('Presente');
+  spreadsheet.getSheets()[3].getRange(lastRow+1,1,1,5).setBackground('red');
+  spreadsheet.getSheets()[2].getRange("B1:B3").clearContent();
+  spreadsheet.setActiveSheet(spreadsheet.getSheetByName('Home'), true);
+  spreadsheet.getSheets()[2].hideSheet();
+}
